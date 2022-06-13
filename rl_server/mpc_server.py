@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
+# import SocketServer
 import base64
 import urllib
 import sys
@@ -249,7 +249,7 @@ def make_request_handler(input_dict):
                 self.send_header('Content-Length', len(send_data))
                 self.send_header('Access-Control-Allow-Origin', "*")
                 self.end_headers()
-                self.wfile.write(send_data)
+                self.wfile.write(send_data.encode())
 
                 # record [state, action, reward]
                 # put it here after training, notice there is a shift in reward storage
@@ -266,7 +266,7 @@ def make_request_handler(input_dict):
             self.send_header('Cache-Control', 'max-age=3000')
             self.send_header('Content-Length', 20)
             self.end_headers()
-            self.wfile.write("console.log('here');")
+            self.wfile.write("console.log('here');".encode())
 
         def log_message(self, format, *args):
             return
@@ -285,7 +285,7 @@ def run(server_class=HTTPServer, port=8333, log_file_path=LOG_FILE):
     for combo in itertools.product([0,1,2,3,4,5], repeat=5):
         CHUNK_COMBO_OPTIONS.append(combo)
 
-    with open(log_file_path, 'wb') as log_file:
+    with open(log_file_path, 'a') as log_file:
 
         s_batch = [np.zeros((S_INFO, S_LEN))]
 

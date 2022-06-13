@@ -150,6 +150,8 @@ def make_request_handler(input_dict):
                     else:
                         state = np.array(self.s_batch[-1], copy=True)
 
+                #self.log_file.write("GOT POST with data: " + str(post_data) + '\n')
+
                 # log wall_time, bit_rate, buffer_size, rebuffer_time, video_chunk_size, download_time, reward
                 self.log_file.write(str(time.time()) + '\t' +
                                     str(VIDEO_BIT_RATE[post_data['lastquality']]) + '\t' +
@@ -183,7 +185,7 @@ def make_request_handler(input_dict):
                 self.send_header('Content-Length', len(send_data))
                 self.send_header('Access-Control-Allow-Origin', "*")
                 self.end_headers()
-                self.wfile.write(send_data)
+                self.wfile.write(send_data.encode())
 
                 # record [state, action, reward]
                 # put it here after training, notice there is a shift in reward storage
@@ -200,7 +202,7 @@ def make_request_handler(input_dict):
             self.send_header('Cache-Control', 'max-age=3000')
             self.send_header('Content-Length', 20)
             self.end_headers()
-            self.wfile.write("console.log('here');")
+            self.wfile.write("console.log('here');".encode())
 
         def log_message(self, format, *args):
             return
@@ -217,7 +219,7 @@ def run(server_class=HTTPServer, port=8333, log_file_path=LOG_FILE):
     if not os.path.exists(SUMMARY_DIR):
         os.makedirs(SUMMARY_DIR)
 
-    with tf.compat.v1.Session() as sess, open(log_file_path, 'wb') as log_file:
+    with tf.compat.v1.Session() as sess, open(log_file_path, 'a') as log_file:
 
         actor = a3c.ActorNetwork(sess,
                                  state_dim=[S_INFO, S_LEN], action_dim=A_DIM,

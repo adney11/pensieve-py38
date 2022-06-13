@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
+# import SocketServer
 import base64
 import urllib
 import sys
@@ -38,7 +38,7 @@ def make_request_handler(input_dict):
             content_length = int(self.headers['Content-Length'])
             post_data = json.loads(self.rfile.read(content_length))
             
-            print post_data
+            print(post_data)
             send_data = ""
 
             if ( 'lastquality' in post_data ):
@@ -78,7 +78,7 @@ def make_request_handler(input_dict):
             self.send_header('Content-Length', len(send_data))
             self.send_header('Access-Control-Allow-Origin', "*")
             self.end_headers()
-            self.wfile.write(send_data)
+            self.wfile.write(send_data.encode())
 
         def do_GET(self):
             print >> sys.stderr, 'GOT REQ'
@@ -87,7 +87,7 @@ def make_request_handler(input_dict):
             self.send_header('Cache-Control', 'max-age=3000')
             self.send_header('Content-Length', 20)
             self.end_headers()
-            self.wfile.write("console.log('here');")
+            self.wfile.write("console.log('here');".encode())
 
         def log_message(self, format, *args):
             return
@@ -100,7 +100,7 @@ def run(server_class=HTTPServer, port=8333, log_file_path=LOG_FILE):
     if not os.path.exists(SUMMARY_DIR):
         os.makedirs(SUMMARY_DIR)
 
-    with open(log_file_path, 'wb') as log_file:
+    with open(log_file_path, 'a') as log_file:
 
         last_bit_rate = DEFAULT_QUALITY
         last_total_rebuf = 0 
@@ -112,7 +112,7 @@ def run(server_class=HTTPServer, port=8333, log_file_path=LOG_FILE):
 
         server_address = ('localhost', port)
         httpd = server_class(server_address, handler_class)
-        print 'Listening on port ' + str(port)
+        print('Listening on port ' + str(port))
         httpd.serve_forever()
 
 

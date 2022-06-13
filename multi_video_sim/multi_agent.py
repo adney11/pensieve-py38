@@ -74,7 +74,7 @@ def testing(epoch, nn_model, log_file):
     test_log_files = os.listdir(TEST_LOG_FOLDER)
     for test_log_file in test_log_files:
         reward = []
-        with open(TEST_LOG_FOLDER + test_log_file, 'rb') as f:
+        with open(TEST_LOG_FOLDER + test_log_file, 'r') as f:
             for line in f:
                 parse = line.split()
                 try:
@@ -111,7 +111,7 @@ def central_agent(net_params_queues, exp_queues):
                         filemode='w',
                         level=logging.INFO)
 
-    with tf.compat.v1.Session() as sess, open(LOG_FILE + '_test', 'wb') as test_log_file:
+    with tf.compat.v1.Session() as sess, open(LOG_FILE + '_test', 'w') as test_log_file:
 
         actor = a3c.ActorNetwork(sess,
                                  state_dim=[S_INFO, S_LEN], action_dim=A_DIM,

@@ -23,7 +23,7 @@ def main():
 		bit_rate = []
 		rebuf_time = []
 
-		with open(INPUT_FOLDER + log_file, 'rb') as f: 
+		with open(INPUT_FOLDER + log_file, 'r') as f: 
 			for line in f:
 				parse = line.split()
 

@@ -41,7 +41,7 @@ class Environment:
 			cooked_time = []
 			cooked_bw = []
 			# print file_path
-			with open(file_path, 'rb') as f:
+			with open(file_path, 'r') as f:
 				for line in f:
 					parse = line.split()
 					cooked_time.append(float(parse[0]))
@@ -78,7 +78,7 @@ class Environment:
 
 		for video_file in video_files:
 			video_sizes = []
-			with open(self.video_folder + video_file, 'rb') as f:
+			with open(self.video_folder + video_file, 'r') as f:
 				line_counter = 0
 				for line in f:
 					line_counter += 1

@@ -59,7 +59,7 @@ def main():
                               video_folder=TEST_VIDEO_FOLDER)
 
     log_path = LOG_FILE + '_' + net_env.all_file_names[net_env.trace_idx]
-    log_file = open(log_path, 'wb')
+    log_file = open(log_path, 'w')
 
     with tf.compat.v1.Session() as sess:
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
+#import SocketServer
 import base64
 import urllib
 import sys
@@ -18,7 +18,7 @@ class Request_Handler(BaseHTTPRequestHandler):
         self.send_header('Content-Length', len(data) )
         self.send_header('Access-Control-Allow-Origin', "*")
         self.end_headers()
-        self.wfile.write(data)
+        self.wfile.write(data.encode())
 
     def do_GET(self):
         print(sys.stderr, 'GOT REQ')
@@ -27,7 +27,7 @@ class Request_Handler(BaseHTTPRequestHandler):
         self.send_header('Cache-Control', 'max-age=3000')
         self.send_header('Content-Length', 20)
         self.end_headers()
-        self.wfile.write("console.log('here');")
+        self.wfile.write("console.log('here');".encode())
 
 
     def log_message(self, format, *args):

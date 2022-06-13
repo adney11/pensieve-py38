@@ -28,7 +28,7 @@ def main():
 		print file_path
 
 		mahimahi_win = []
-		with open(file_path, 'rb') as f:
+		with open(file_path, 'r') as f:
 			for line in f:
 				mahimahi_win.append(float(line.split()[0]))
 
@@ -46,7 +46,7 @@ def main():
 			start_ptr = find_nearest(mahimahi_win, start_time * MILLISEC_IN_SEC)
 			end_ptr = find_nearest(mahimahi_win, end_time * MILLISEC_IN_SEC)
 
-			with open(output_path + '_' + str(int(start_time)), 'wb') as f:
+			with open(output_path + '_' + str(int(start_time)), 'w') as f:
 				for i in xrange(start_ptr, end_ptr + 1):
 					towrite = mahimahi_win[i] - mahimahi_win[start_ptr]
 					f.write(str(int(towrite)) + '\n')

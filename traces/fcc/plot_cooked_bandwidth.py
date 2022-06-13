@@ -12,7 +12,7 @@ LINK_FILE = './201606/cooked/trace_9996_http---www.youtube.com'
 
 
 bandwidth_all = []
-with open(LINK_FILE, 'rb') as f:
+with open(LINK_FILE, 'r') as f:
 	for line in f:
 		throughput = int(line.split()[0])
 		bandwidth_all.append(throughput)

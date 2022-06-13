@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import SocketServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
+# import SocketServer
 import base64
 import urllib
 import sys
@@ -73,12 +73,12 @@ def make_request_handler(input_dict):
         def do_POST(self):
             content_length = int(self.headers['Content-Length'])
             post_data = json.loads(self.rfile.read(content_length))
-            print post_data
+            print(post_data)
 
             if ( 'pastThroughput' in post_data ):
                 # @Hongzi: this is just the summary of throughput/quality at the end of the load
                 # so we don't want to use this information to send back a new quality
-                print "Summary: ", post_data
+                print("Summary: ", post_data)
             else:
                 # option 1. reward for just quality
                 # reward = post_data['lastquality']
@@ -269,7 +269,8 @@ def make_request_handler(input_dict):
                 self.send_header('Content-Length', len(send_data))
                 self.send_header('Access-Control-Allow-Origin', "*")
                 self.end_headers()
-                self.wfile.write(send_data)
+                self.wfile.write(send_data.encode())
+
 
                 # record [state, action, reward]
                 # put it here after training, notice there is a shift in reward storage
@@ -286,7 +287,7 @@ def make_request_handler(input_dict):
             self.send_header('Cache-Control', 'max-age=3000')
             self.send_header('Content-Length', 20)
             self.end_headers()
-            self.wfile.write("console.log('here');")
+            self.wfile.write("console.log('here');".encode())
 
         def log_message(self, format, *args):
             return
@@ -305,7 +306,7 @@ def run(server_class=HTTPServer, port=8333, log_file_path=LOG_FILE):
     for combo in itertools.product([0,1,2,3,4,5], repeat=5):
         CHUNK_COMBO_OPTIONS.append(combo)
 
-    with open(log_file_path, 'wb') as log_file:
+    with open(log_file_path, 'a') as log_file:
 
         s_batch = [np.zeros((S_INFO, S_LEN))]
 
@@ -327,7 +328,7 @@ def run(server_class=HTTPServer, port=8333, log_file_path=LOG_FILE):
 
         server_address = ('localhost', port)
         httpd = server_class(server_address, handler_class)
-        print 'Listening on port ' + str(port)
+        print('Listening on port ' + str(port))
         httpd.serve_forever()
 
 
@@ -343,7 +344,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print "Keyboard interrupted."
+        print("Keyboard interrupted.")
         try:
             sys.exit(0)
         except SystemExit:

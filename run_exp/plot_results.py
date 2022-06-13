@@ -40,7 +40,7 @@ def main():
 
 		print(log_file)
 
-		with open(RESULTS_FOLDER + log_file, 'rb') as f:
+		with open(RESULTS_FOLDER + log_file, 'r') as f:
 			if SIM_DP in log_file:
 				for line in f:
 					parse = line.split()

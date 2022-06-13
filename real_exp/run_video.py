@@ -3,6 +3,8 @@ import sys
 import signal
 import subprocess
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -22,6 +24,10 @@ from time import sleep
 # if they are at those locations, don't need to specify
 
 
+def exec_in_venv(command, venv_path):
+	newcommand = 'exec/bin/bash -c "source /newhome/pyenvs/pensieve38/bin/activate && ' + command
+
+
 def timeout_handler(signum, frame):
 	raise Exception("Timeout")
 
@@ -34,7 +40,7 @@ exp_id = sys.argv[3]
 # ---------------------------------------------------
 #          |
 #          v
-url = 'localhost/' + 'myindex_' + abr_algo + '.html'
+url = 'http://10.10.1.1/' + 'myindex_' + abr_algo + '.html'
 
 # timeout signal
 signal.signal(signal.SIGALRM, timeout_handler)
@@ -43,50 +49,61 @@ signal.alarm(run_time + 30)
 try:
 	# copy over the chrome user dir
 	default_chrome_user_dir = '../abr_browser_dir/chrome_data_dir'
-	chrome_user_dir = '/tmp/chrome_user_dir_real_exp_' + abr_algo
-	os.system('rm -r ' + chrome_user_dir)
-	os.system('cp -r ' + default_chrome_user_dir + ' ' + chrome_user_dir)
+	chrome_user_dir = f'/tmp/chrome_user_dir_real_exp_' + abr_algo
+	os.system('sudo rm -rf ' + chrome_user_dir)
+	#os.system(f'mkdir /tmp/{exp_id}')
+	os.system('sudo cp -r ' + default_chrome_user_dir + ' ' + chrome_user_dir)
+	os.system('sudo chown -R acardoza ' + chrome_user_dir)
 	
 	# start abr algorithm server
 	if abr_algo == 'RL':
-		command = 'exec /usr/bin/python ../rl_server/rl_server_no_training.py ' + exp_id
+		command = 'exec /usr/bin/python3.8 ../rl_server/rl_server_no_training.py ' + exp_id
 	elif abr_algo == 'fastMPC':
-		command = 'exec /usr/bin/python ../rl_server/mpc_server.py ' + exp_id
+		command = 'exec /usr/bin/python3.8 ../rl_server/mpc_server.py ' + exp_id
 	elif abr_algo == 'robustMPC':
-		command = 'exec /usr/bin/python ../rl_server/robust_mpc_server.py ' + exp_id
+		command = 'exec /usr/bin/python3.8 ../rl_server/robust_mpc_server.py ' + exp_id
 	else:
-		command = 'exec /usr/bin/python ../rl_server/simple_server.py ' + abr_algo + ' ' + exp_id
+		command = 'exec /usr/bin/python3.8 ../rl_server/simple_server.py ' + abr_algo + ' ' + exp_id
 	
 	proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 	sleep(2)
 	
+	#print("DEBUG: abr algorithm server started")
 	# to not display the page in browser
 	display = Display(visible=0, size=(800,600))
 	display.start()
+	#print("DEBUG: display started")
 	
 	# initialize chrome driver
-	options=Options()
+	options= webdriver.ChromeOptions()
 	chrome_driver = '../abr_browser_dir/chromedriver'
 	options.add_argument('--user-data-dir=' + chrome_user_dir)
 	options.add_argument('--ignore-certificate-errors')
-	driver=webdriver.Chrome(chrome_driver, chrome_options=options)
+	options.add_argument('--disable-web-security')
+	#options.add_argument('--headless')
+	#print(f"DEBUG: Chrome options: {options.}")
+	driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+	#print("DEBUG: chrome driver started..")
 	
 	# run chrome
 	driver.set_page_load_timeout(10)
+	#print("DEBUG: page parameters set!")
 	driver.get(url)
+	#print("DEBUG: chrome running, got url")
 	
 	sleep(run_time)
+	#input()
 	
 	driver.quit()
 	display.stop()
-	
+	#print("DEBUG: stopped chrome driver")
 	# kill abr algorithm server
 	proc.send_signal(signal.SIGINT)
 	# proc.kill()
 	
 	print('done')
 	
-except Exception as e:
+except Exception as e:	
 	try: 
 		display.stop()
 	except:

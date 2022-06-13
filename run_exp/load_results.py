@@ -18,7 +18,7 @@ def main():
 	for log_file in log_files:
 
 		R = 0
-		with open(RESULTS_FOLDER + log_file, 'rb') as f:
+		with open(RESULTS_FOLDER + log_file, 'r') as f:
 			for line in f:
 				parse = line.split()
 				R += float(parse[-1])

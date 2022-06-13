@@ -14,7 +14,7 @@ time_all = []
 packet_sent_all = []
 last_time_stamp = 0
 packet_sent = 0
-with open(LINK_FILE, 'rb') as f:
+with open(LINK_FILE, 'r') as f:
 	for line in f:
 		time_stamp = int(line.split()[0])
 		if time_stamp == last_time_stamp:

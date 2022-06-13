@@ -14,7 +14,7 @@ LINK_FILE = './logs/report_bus_0010.log'
 time_ms = []
 bytes_recv = []
 recv_time = []
-with open(LINK_FILE, 'rb') as f:
+with open(LINK_FILE, 'r') as f:
 	for line in f:
 		parse = line.split()
 		time_ms.append(int(parse[1]))

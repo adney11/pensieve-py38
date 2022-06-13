@@ -29,7 +29,7 @@ text_map = {0.3: '240P',
 def read_file(FILE_NAME):
 	ts = []
 	vs = []
-	with open(FILE_NAME, 'rb') as f:
+	with open(FILE_NAME, 'r') as f:
 		for line in f:
 			parse = line.split()
 			if len(parse) != 2:

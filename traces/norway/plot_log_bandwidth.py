@@ -13,7 +13,7 @@ LINK_FILE = './cooked_data/bus.ljansbakken-oslo-report.2010-09-28_1407CEST.log'
 time_ms = []
 bytes_recv = []
 recv_time = []
-with open(LINK_FILE, 'rb') as f:
+with open(LINK_FILE, 'r') as f:
 	for line in f:
 		parse = line.split()
 		time_ms.append(float(parse[0]))
